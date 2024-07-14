@@ -17,7 +17,6 @@ $httpServer->set(
 $httpServer->on("request", function ($request, $response) {
     var_dump($request);
     $response->cookie("NaMe", "VaLue", time()+1800);
-
     $response->end("<h1>Http server is working</h1>");
 });
 
