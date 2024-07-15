@@ -12,7 +12,6 @@ class Ws
     protected int $port;
     protected Server $server;
     protected string $msg;
-    protected int $frameFd;
 
     public function __construct(string $ip = "0.0.0.0", int $port = 9501)
     {
@@ -38,8 +37,8 @@ class Ws
 
         // set number of workers
         $this->server->set([
-            'worker_num' => 2,
-            "task_worker_num" => 2
+            'worker_num' => 20,
+            "task_worker_num" => 20
         ]);
         // reg task event
         $this->server->on("task", [$this, "onTask"]);
@@ -57,34 +56,14 @@ class Ws
         echo "received MSG: ($frame->data)\n";
         echo "sending...\n";
 
-        // start task
-        $tasks = [
-            'task' => 1,
-            'fd' => $frame->fd,
-        ];
-        $server->task($tasks);
-
-        // reserve $frame->fd for use to send task completed msg to client
-        $this->frameFd = $frame->fd;
-
+       
         // multi-tasks
-        echo "multi-tasks";
-
-        $tasks = [
-            [
-                'task' => 11,
+        echo "multi-tasks\n";
+        for ($i = 40; $i--;) {
+            $task = [
+                'task' => $i,
                 'fd' => $frame->fd,
-            ],
-            [
-                'task' => 12,
-                'fd' => $frame->fd,
-            ],
-            [
-                'task' => 13,
-                'fd' => $frame->fd,
-            ],
-        ];
-        foreach($tasks as $task){
+            ];
             $server->task($task);
         }
 
@@ -94,10 +73,10 @@ class Ws
 
     public function onTask(Server $server, int $taskId, int $workerId, mixed $data): mixed
     {
-        echo "task content: \n";
-        var_dump($data);
+        // echo "task content: \n";
+        // var_dump($data);
         echo "Start task - taskId: ($taskId), workerId: ($workerId)\n";
-        $workload = mt_rand(5,10);
+        $workload = mt_rand(5, 10);
         sleep($workload);
         echo "--------$workload-------\n";
         echo "task:($taskId - $workerId) finished \n";
@@ -114,7 +93,7 @@ class Ws
     public function onTaskFinish(Server $server, int $taskId, mixed $data)
     {
         echo "task($taskId) completed\n";
-        var_dump($data);
+        // var_dump($data);
         $msg = "task($taskId) completed\n";
         $fd = json_decode($data["task"])->fd;
 
