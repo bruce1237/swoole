@@ -11,3 +11,6 @@ to executing time consume task such as send email, broadcast...
 ### onFinish
 
 ### set tak_worker_num
+
+
+the task is running in parallar of number of works

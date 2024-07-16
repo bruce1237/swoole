@@ -37,8 +37,8 @@ class Ws
 
         // set number of workers
         $this->server->set([
-            'worker_num' => 20,
-            "task_worker_num" => 20
+            'worker_num' => 4, // have no idea
+            "task_worker_num" => 16, // how many task can be processed at a single time
         ]);
         // reg task event
         $this->server->on("task", [$this, "onTask"]);
@@ -59,7 +59,7 @@ class Ws
        
         // multi-tasks
         echo "multi-tasks\n";
-        for ($i = 40; $i--;) {
+        for ($i = 14; $i--;) {
             $task = [
                 'task' => $i,
                 'fd' => $frame->fd,
@@ -75,8 +75,8 @@ class Ws
     {
         // echo "task content: \n";
         // var_dump($data);
-        echo "Start task - taskId: ($taskId), workerId: ($workerId)\n";
-        $workload = mt_rand(5, 10);
+        echo "Start task - taskId: ($taskId), workerId: ($workerId) ----dataTask: ".$data['task']."---datafd:".$data['fd']."\n";
+        $workload = mt_rand(1, 3);
         sleep($workload);
         echo "--------$workload-------\n";
         echo "task:($taskId - $workerId) finished \n";
@@ -94,8 +94,9 @@ class Ws
     {
         echo "task($taskId) completed\n";
         // var_dump($data);
-        $msg = "task($taskId) completed\n";
         $fd = json_decode($data["task"])->fd;
+        $client_task_id = json_decode($data["task"])->task;
+        $msg = "task($taskId) - ($client_task_id)completed\n";
 
         $this->server->push($fd, $msg);
     }
