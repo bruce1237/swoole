@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  php:
+    tty: true
+    stdin_open: true
+    image: swoole:latest
+    container_name: swoole
+    ports:
+      - "8080:80"
+      - "9501:9501"
+      - "9502:9502"
+    volumes:
+      - ./app:/home/bo/swoole
+  
