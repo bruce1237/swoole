@@ -4,7 +4,7 @@ services:
   php:
     tty: true
     stdin_open: true
-    image: swoole:2.0
+    image: sunbo007/swoole:2.0
     container_name: swoole
     ports:
       - "8080:80"
