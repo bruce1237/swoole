@@ -1,0 +1,62 @@
+object(Swoole\Http\Request)#7 (9) {
+  ["fd"]=>
+  int(3)
+  ["streamId"]=>
+  int(0)
+  ["header"]=>
+  array(10) {
+    ["host"]=>
+    string(14) "localhost:8080"
+    ["sec-fetch-site"]=>
+    string(4) "none"
+    ["connection"]=>
+    string(10) "keep-alive"
+    ["upgrade-insecure-requests"]=>
+    string(1) "1"
+    ["sec-fetch-mode"]=>
+    string(8) "navigate"
+    ["accept"]=>
+    string(63) "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    ["user-agent"]=>
+    string(117) "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+    ["accept-language"]=>
+    string(14) "en-GB,en;q=0.9"
+    ["sec-fetch-dest"]=>
+    string(8) "document"
+    ["accept-encoding"]=>
+    string(13) "gzip, deflate"
+  }
+  ["server"]=>
+  array(10) {
+    ["request_method"]=>
+    string(3) "GET"
+    ["request_uri"]=>
+    string(1) "/"
+    ["path_info"]=>
+    string(1) "/"
+    ["request_time"]=>
+    int(1721434405)
+    ["request_time_float"]=>
+    float(1721434405.06764)
+    ["server_protocol"]=>
+    string(8) "HTTP/1.1"
+    ["server_port"]=>
+    int(80)
+    ["remote_port"]=>
+    int(48220)
+    ["remote_addr"]=>
+    string(12) "192.168.65.1"
+    ["master_time"]=>
+    int(1721434405)
+  }
+  ["cookie"]=>
+  NULL
+  ["get"]=>
+  NULL
+  ["files"]=>
+  NULL
+  ["post"]=>
+  NULL
+  ["tmpfiles"]=>
+  NULL
+}
