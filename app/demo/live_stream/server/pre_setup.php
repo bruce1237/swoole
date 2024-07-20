@@ -1,11 +1,13 @@
 <?php
 
-function callResource(string $uri, ?array $params = null): string
+function callResource(string $uri, array $params = []): string
 {
     $info = analysisUri($uri);
 
     require_once $info['file'];
     $obj = new $info['class'];
+
+   
     return call_user_func_array([$obj, $info['function']], $params);
     
 

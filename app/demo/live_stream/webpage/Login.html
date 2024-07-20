@@ -1,17 +1,47 @@
 <html>
-    <form action ="./Sms/sendSmsVerification?mobile=123321" method="POST">
-        <table>
-            <tr>
-                <td>Name</td>
-                <td><input name ="name" type="text" /></td>
-            </tr>
-            <tr>
-                <td>pwd</td>
-                <td><input name ="pwd" type="text" /></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type ="submit" name="login" value="Login" /></td>
-            </tr>
-        </table>
-    </form>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <form action ="./index/index" method="POST">
+            <table>
+                <tr>
+                    <td>Phone Number</td>
+                    <td><input name ="name" type="text" id = "mobile" /></td>
+                </tr>
+                <tr>
+                    <td>Verification</td>
+                    <td><input name ="pwd" type="text" id = "verificationCode" readonly/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type ="button" name="code" value="get Verif Code" id = "getCode" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type ="submit" name="login" value="Login" id = "login" /></td>
+                </tr>
+            </table>
+        </form>
+
+        <script>
+            $(document).ready(function(){
+                $("#getCode").click(function(){
+                    var mobile = $("#mobile").val();
+                    if (mobile === "") {
+                        alert("please enter your mobile number");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "./Sms/sendSmsVerification?mobile=" + mobile ,
+                        type: "GET",
+                        success: function(response){
+                            $("#verificationCode").val(response);
+                            
+                        }
+                    })
+
+                });
+            });
+        </script>
+    </body>
 </html>

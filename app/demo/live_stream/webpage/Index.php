@@ -3,8 +3,9 @@ namespace webpage;
 
 class Index
 {
-    public function index()
+    public function index(array $data)
     {
+        var_dump($data);
         return "this is Page(Index), func(Index)\n";
     }
 
