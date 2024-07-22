@@ -32,4 +32,10 @@ class ChatRoom
             $this->chatRoom[$charRoom] = $chat;
         }
     }
+
+    public function addChat(string $charRoom, array $chat): bool
+    {
+        $this->chatRoom[$charRoom][]=$charRoom;
+        return true;
+    }
 }

@@ -67,17 +67,9 @@ class Matches
     {
         return $this->matches;
     }
+
+    public function getAllMatchNames(): array{
+        return array_keys($this->matches);
+    }
 }
 
-
-// $team = Team::getInstance();
-
-
-// $r = $team->getTeam();
-// echo "F:\n";
-// var_dump($r);
-
-// $team = Team::getInstance();
-// $r = $team->getTeam();
-// echo "S:\n";
-// var_dump($r);

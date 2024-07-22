@@ -7,15 +7,12 @@ class MatchDetails
     protected array $matchDetail;
 
     protected array $defaultMatchDetail = [
-        "time"=>"2024-01-01:10:10",
-        "teams"=>["teamA", "teamB"],
-        "details"=>[
+        "2024-01-01:10:10"=>[
             "section1"=>[],
             "section2"=>[],
             "section3"=>[],
             "section4"=>[],
-        ],
-
+        ]
     ];
     
     public static function getInstance()
@@ -28,7 +25,23 @@ class MatchDetails
 
     private function __construct()
     {
-        $this->importMembers($this->defaultMembers);
+        $this->importMatchDetails($this->defaultMatchDetail);
+    }
+
+    public function importMatchDetails($matchDetails):void
+    {
+        $this->matchDetail=$matchDetails;
+    }
+
+    public function addMatchDetails(string $match, string $section, string $details): bool
+    {
+        $this->matchDetail[$match][$section][]=$details;
+        return true;
+    }
+
+    public function getMatchDetails(): array
+    {
+        return $this->matchDetail;
     }
 
 
