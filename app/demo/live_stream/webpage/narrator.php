@@ -2,6 +2,7 @@
 
 namespace webpage;
 
+use Redis;
 use server\database\MatchDetails;
 use server\database\Matches;
 
@@ -21,13 +22,39 @@ class Narrator
     }
 
     public function updateMatch(array $data): bool
-    {
-        var_dump($data['POST']);
+    {   
         $matchName = $data['POST']["game"];
         $section = $data['POST']["section"];
-        $content = $data['POST']["content"];
-        $this->matchDetails->addMatchDetails($matchName, $section, $content);
-        var_dump($this->matchDetails->getMatchDetails());
+        $content = date("H:i", time()) ." ". $data['POST']["content"];
+        $matchDetails = $this->matchDetails->addMatchDetails($matchName, $section, $content);
+        $this->recordMatch($matchDetails);
+
+        // get connected client
+        $redis = getRedis();
+        $connectedClients = $redis->sMembers("connectedClientIds");
+        
+        $content = json_encode(["section"=>$section, "content"=>$content]);
+
+        
+        // push to each client
+        /**
+         * some client was connected, but push failed
+         */
+        foreach($connectedClients as $fd){
+            
+            if ($data['Server']->isEstablished($fd)) {
+                
+            
+                $data['Server']->push((int)$fd, $content);
+            }
+        }
         return true;
+        
+    }
+
+    protected function recordMatch(array $matchesDetails): bool
+    {
+        $redis = getRedis();
+        return $redis->set("matchDetails", json_encode($matchesDetails));
     }
 }

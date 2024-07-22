@@ -39,8 +39,8 @@ class WsServer
         // register websocket server function
         $this->wsServer->on("open", [$this, "onOpen"]);
         $this->wsServer->on("message", [$this, "onMessage"]);
-
-
+        $this->wsServer->on("close", [$this, "onClose"]);
+        
         // start server
         $this->wsServer->start();
     }
@@ -50,18 +50,21 @@ class WsServer
         define("APP_PATH", __DIR__ . "/../webpage/");
         define("SER_PATH", __DIR__);
         require_once SER_PATH . "/pre_setup.php";
+        
+        // clear connected client ids
+        getRedis()->del("connectedClientIds");
+        
     }
 
     public function onRequest(Request $request, Response $response)
     {
-
         $rs = callResource(
             $request->server["request_uri"],
             [
                 [
                     "GET" => $request->get,
                     "POST" => $request->post,
-                    "Server"=>$this->wsServer,
+                    "Server" => $this->wsServer,
                 ]
             ]
         );
@@ -86,12 +89,19 @@ class WsServer
 
     public function onOpen(Server $server, Request $request)
     {
-        echo "connected $request-fd \n";
+        $redis = getRedis();
+        $redis->sAdd("connectedClientIds", $request->fd);
+        echo "onOpen Log - ($request->fd) connected \n";
+    }
 
+    public function onClose(Server $server, int $fd)
+    {
+        $redis = getRedis();
+        $redis->sRem("connectedClientIds", $fd);
+        echo "onClose Log - ($fd) disconnected \n";
     }
 
     public function onMessage(Server $server, Frame $frame)
     {
-
     }
 }

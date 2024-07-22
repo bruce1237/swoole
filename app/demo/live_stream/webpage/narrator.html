@@ -1,74 +1,73 @@
 <html>
 
-<head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
 
-<body>
-    <form id="narrator">
-        <label>game:
-            <select name="game" id="game">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-        </label><br />
-        <label>Section:
-            <select name="section" id="section">
-                <option value="section1">1</option>
-                <option value="section2">2</option>
-                <option value="section3">3</option>
-                <option value="section4">4</option>
-            </select>
-        </label><br />
-        <label>Content:<br />
-            <textarea id="content"></textarea>
-        </label><br />
-        <input type="button" id="update" value="Update" />
+    <body>
+        <form id="narrator">
+            <label>game:
+                <select name="game" id="game">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </label><br />
+            <label>Section:
+                <select name="section" id="section">
+                    <option value="section1">1</option>
+                    <option value="section2">2</option>
+                    <option value="section3">3</option>
+                    <option value="section4">4</option>
+                </select>
+            </label><br />
+            <label>Content:<br />
+                <textarea id="content"></textarea>
+            </label><br />
+            <input type="button" id="update" value="Update" />
 
-    </form>
-</body>
-<script>
-    $(document).ready(function () {
-        $.ajax({
-            url: "./narrator/getMatchNames",
-            type: "GET",
-            success: function (response) {
-                game = $("#game");
-                game.empty();
-                response = JSON.parse(response);
-                $.each(response, function (key, value) {
-                    $("#game").append($("<option>", {
-                        value: value,
-                        text: value
-                    }))
-                });
-            }
-        });
-        $("#update").click(function () {
-            game = $("#game").val();
-            section = $("#section").val();
-            content = $("#content").val();
+            <div id = "update_result"></div>
+
+        </form>
+    </body>
+    <script>
+        $(document).ready(function () {
             $.ajax({
-                url: "./Narrator/updateMatch",
-                type: "POST",
-                data: {
-                    game: game,
-                    section: section,
-                    content: content
-                },
+                url: "./narrator/getMatchNames",
+                type: "GET",
                 success: function (response) {
-                    if (response === "true") {
-                        alert("update Success!");
-                    } else {
-                        alert("Update Failed!!!");
-                    }
-
+                    game = $("#game");
+                    game.empty();
+                    response = JSON.parse(response);
+                    $.each(response, function (key, value) {
+                        $("#game").append($("<option>", {
+                            value: value,
+                            text: value
+                        }))
+                    });
                 }
             });
+            $("#update").click(function () {
+                game = $("#game").val();
+                section = $("#section").val();
+                content = $("#content").val();
+                $.ajax({
+                    url: "./Narrator/updateMatch",
+                    type: "POST",
+                    data: {
+                        game: game,
+                        section: section,
+                        content: content
+                    },
+                    success: function (response) {
+                        if (response === "true") {
+                            $("#update_result").html("update Success!");
+                        } else {
+                            $("#update_result").html("Update Failed!!!");
+                        }
+                    }
+                });
+            });
         });
-    });
-</script>
-
-
+    </script>
 </html>

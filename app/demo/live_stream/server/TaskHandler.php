@@ -8,7 +8,8 @@ class TaskHandler
         echo "taskHandler Log - sendSmsCode\n";
         echo "taskHandler Log - Mobile: {$data['mobile']}, Code: {$data['code']}\n";
         echo "taskHandler Log - this is going to task 3 seconds\n";
-        sleep(3);
+        
+        workVerySlow();
 
         echo "taskHandler Log - SmsCode sent successful\n";
         return [

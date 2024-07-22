@@ -144,7 +144,7 @@ class Sms
         $redis->connect($this->redisHost);
         $redis->select(0);
 
-        Coroutine::sleep(5);
+        workVerySlow();
 
         echo "cacheVerificationCode Log - set code:($code) with Mobile:($mobile) into cache\n";
 

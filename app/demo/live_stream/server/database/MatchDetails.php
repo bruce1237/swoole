@@ -33,10 +33,10 @@ class MatchDetails
         $this->matchDetail=$matchDetails;
     }
 
-    public function addMatchDetails(string $match, string $section, string $details): bool
+    public function addMatchDetails(string $match, string $section, string $details): array
     {
         $this->matchDetail[$match][$section][]=$details;
-        return true;
+        return $this->matchDetail;
     }
 
     public function getMatchDetails(): array
