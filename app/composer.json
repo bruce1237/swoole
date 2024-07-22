@@ -1,0 +1,15 @@
+{
+    "name": "bo/swoole",
+    "autoload": {
+        "psr-4": {
+            "server\\": "demo/live_stream/server/",
+            "webpage\\": "demo/live_stream/webpage/"
+        }
+    },
+    "authors": [
+        {
+            "name": "bo"
+        }
+    ],
+    "require": {}
+}

@@ -4,7 +4,6 @@ namespace webpage;
 
 use Redis;
 
-session_start();
 
 class Login
 {
