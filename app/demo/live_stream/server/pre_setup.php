@@ -1,6 +1,6 @@
 <?php
 
-function callResource(string $uri, array $params = []): string
+function callResource(string $uri, array $params = []): ?string
 {
     $info = analysisUri($uri);
 

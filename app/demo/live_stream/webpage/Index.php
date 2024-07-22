@@ -3,14 +3,13 @@ namespace webpage;
 
 class Index
 {
-    public function index(array $data)
+    public function index()
     {
-        var_dump($data);
-        return "this is Page(Index), func(Index)\n";
-    }
+        if (!Login::isLogin()) {
+            return "GO TO LOGIN";
+        }
 
-    public function hello(string $id, string $name)
-    {
-        return "Hello ($id) $name this is Page(Index), func(Hello)\n";
+        return "Index/Index";
     }
+    
 }

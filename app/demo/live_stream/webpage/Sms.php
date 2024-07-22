@@ -52,6 +52,7 @@ class Sms
      */
     public function sendSmsVerification(array $data): string
     {
+
         $mobile = $data["GET"]['mobile'];
 
         if (!$code = $this->getVerificationCode($mobile)) {
@@ -62,11 +63,9 @@ class Sms
 
             // using Coroutine to run Redis as Redis is so slow 5 sec delay
             Coroutine::create(function () use ($mobile, $code, $channel) {
-                
+
                 echo "Log - Start process Redis Request\n";
-                $redis = new Redis();
-                $redis->connect($this->redisHost);
-                $redis->select(0);
+
                 $cache = $this->cacheVerificationCode($mobile, $code);
 
                 echo "Log - Cache status: ";
@@ -74,7 +73,7 @@ class Sms
                 if ($cache) {
                     echo "Log - Cache Success, push to channel with Code\n";
                     $channel->push([$mobile => $code]);
-                    $channel->push([$mobile => $code."ccc"]);
+                    $channel->push([$mobile => $code . "ccc"]);
                 } else {
                     echo "Log - Cache Success, push to channel with False\n";
                     $channel->push([$mobile => false]);
@@ -88,7 +87,7 @@ class Sms
             $success = $channel->pop();
             var_dump($success);
             if (isset($success[$mobile]) && $success[$mobile]) {
-                return "NEW - " . $success[$mobile];
+                return "NEW: " . $success[$mobile];
             }
             return "ERR - Verification Failed, please try again!";
         }
@@ -114,18 +113,14 @@ class Sms
         if (!$code = $this->getVerificationCode($mobile)) {
             $code = $this->generateVerificationCode($this->verificationCodeLength);
 
-
             // using Coroutine to run Redis as Redis is so slow 5 sec delay
             Coroutine::create(function () use ($mobile, $code) {
-                $redis = new Redis();
-                $redis->connect($this->redisHost);
-                $redis->select(0);
+
                 $cache = $this->cacheVerificationCode($mobile, $code);
-                
+
                 // check if code has been cached
                 if ($cache) {
                     echo "Cache Success\n";
-                    
                 } else {
                     echo "Cache failed\n";
                     return "ERR - Verification Failed, please try again!";
@@ -136,9 +131,6 @@ class Sms
 
             echo "while waiting for Redis doing in background\n";
             echo "here is doing something else\n";
-
-
-
         }
         // send out code 
         return "EXT: " . $code;
@@ -148,8 +140,16 @@ class Sms
 
     protected function cacheVerificationCode(string $mobile, string $code, int $ttl = 60): bool
     {
+        echo "Log - connect to Redis\n";
+        $redis = new Redis();
+        $redis->connect($this->redisHost);
+        $redis->select(0);
+
         Coroutine::sleep(5);
-        $rs = $this->redis->set($mobile, $code, ["NX", "EX" => $ttl]);
+
+        echo "Log - set code:($code) with Mobile:($mobile) into cache\n";
+
+        $rs = $redis->set($mobile, $code, ["NX", "EX" => $ttl]);
         $rs = false;
         $rs = true;
         return $rs;
@@ -171,5 +171,33 @@ class Sms
     public function __destruct()
     {
         $this->redis->close();
+    }
+
+
+    /**
+     * Undocumented function
+     *
+     * @param array $data
+     * @return string
+     */
+    public function sendSmsVerificationTaskMode(array $data): string
+    {
+        $taskData = [
+            "mobile" => $data['GET']['mobile'],
+            "code" => $this->generateVerificationCode($this->verificationCodeLength),
+        ];
+
+
+        $httpServer = $data['POST']['httpServer'];
+        
+        echo "Log - start task\n";
+        $httpServer->task($taskData);
+
+        echo "Log - task Completed\n";
+
+        echo "Log - cache Code\n";
+        $this->cacheVerificationCode($taskData['mobile'], $taskData['code']);
+
+        return "task: " . $taskData['code'];
     }
 }

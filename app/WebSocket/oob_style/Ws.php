@@ -39,16 +39,9 @@ class Ws {
     public function onReceive(Server $server, Frame $frame): void
     {
         echo "received MSG: ($frame->data)\n";
-        echo "sending...\n";
+        echo "sending - PUSH\n";
         $this->server->push($frame->fd, $this->msg);
     }
-
-    public function onSend(Frame $frame, string $msg): void
-    {
-        echo "sending...\n";
-        $this->server->push($frame->fd, $msg);
-    }
-
 
     public function close(): void
     {
