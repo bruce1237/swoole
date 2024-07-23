@@ -70,7 +70,7 @@ class Sms
             $cache = $this->cacheVerificationCode($mobile, $code);
 
             echo "Log - Cache status: ";
-            var_dump($cache);
+            
             if ($cache) {
                 echo "Log - Cache Success, push to channel with Code\n";
                 $channel->push([$mobile => $code]);
@@ -195,7 +195,7 @@ class Sms
         ];
 
 
-        $httpServer = $data['POST']['httpServer'];
+        $httpServer = $data['Server'];
 
         echo "sendSmsVerificationTaskMode Log - start task\n";
         $httpServer->task($taskData);

@@ -24,22 +24,30 @@ class TaskHandler
 
     public function publishLive($data): array
     {
+                // get connected client
+                $redis = getRedis();
+                $clientIds = $redis->sMembers("connectedClientIds");
 
-        $clientIds = $data['clientIds'];
+        
         $server = $data['server'];
         $content = $data['content'];
-        if ($server instanceof Server){
+        if ($server instanceof Server) {
             echo "SWWWWW\n";
         } else {
             echo "NNNNNNNNNNNNN\n";
-
         }
-        foreach ($clientIds as $fd) {
-            echo "publishLive Log - $fd\n";
-            if ($server->isEstablished($fd)) {
-                echo "publishLive Log - push to $fd\n";
-                $server->push((int)$fd, $content);
+
+        for ($i = 100; $i--;) {
+            echo "publishLive Log - $i ---\n";
+
+            foreach ($clientIds as $fd) {
+                echo "publishLive Log - FD: $fd\n";
+                // if ($server->isEstablished($fd)) {
+                    echo "publishLive Log - ($i)push to $fd\n";
+                    $server->push((int)$fd, $content);
+                // }
             }
+            sleep(1);
         }
 
         return [

@@ -21,6 +21,7 @@ class Login
         $redisCode = $redis->get($mobile);
         $code = substr($code, -4);
         $_SESSION['LOGIN'] = true;
+        $_SESSION['LOGIN_USER'] = $data['POST']['mobile'];
 
         return $code == $redisCode;
     }

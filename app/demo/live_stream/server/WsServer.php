@@ -15,17 +15,19 @@ class WsServer
 {
     protected string $host = "0.0.0.0";
     protected int $port = 9501;
+    protected int $chatRoomPort = 9502;
     protected Server $wsServer;
 
     public function __construct()
     {
-        $this->wsServer = new Server($this->host, $this->port);
+        $this->wsServer = new Server($this->host, $this->port, SWOOLE_PROCESS);
         $this->wsServer->set([
             "enable_static_handler" => true,
             "document_root" => __DIR__ . "/../webpage/",
             "worker_num" => 4,
             'task_worker_num' => 8,
         ]);
+        $this->wsServer->listen($this->host, $this->chatRoomPort, SWOOLE_TCP);
 
         // register http server functions
         $this->wsServer->on("workerStart", [$this, "onWorkStart"]);

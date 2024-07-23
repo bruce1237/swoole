@@ -25,31 +25,35 @@ class Narrator
     {
         $matchName = $data['POST']["game"];
         $section = $data['POST']["section"];
-        $content = date("H:i", time()) ." ". $data['POST']["content"];
+        $content = date("H:i", time()) . " " . $data['POST']["content"];
         $matchDetails = $this->matchDetails->addMatchDetails($matchName, $section, $content);
         $this->recordMatch($matchDetails);
 
-        // get connected client
+        // get connected client from redis
         $redis = getRedis();
         $connectedClients = $redis->sMembers("connectedClientIds");
-        
-        $content = json_encode(["section"=>$section, "content"=>$content]);
 
-        
+        $connectedClients = $data['Server']->ports[0]->connections;
+        echo "updateMatch Log - total Connection:" .  count($connectedClients) ."\n";
+
+
         // push to each client
         /**
          * some client was connected, but push failed
          */
-        foreach($connectedClients as $fd){
+
+        $content = json_encode(["game"=>$matchName, "section" => $section, "content" => $content]);
+        foreach ($connectedClients as $fd) {
             if ($data['Server']->isEstablished($fd)) {
                 $data['Server']->push((int)$fd, $content);
             }
         }
 
+
         // using task to push content to client
         // FAILED... Don't know why
 
-        // $server = $data['Server'];        
+        // $server = $data['Server'];
         // $taskData = [
         //     "taskName" => "publishLive",
         //     "data" => [
@@ -66,7 +70,6 @@ class Narrator
 
 
         return true;
-        
     }
 
     protected function recordMatch(array $matchesDetails): bool

@@ -33,7 +33,7 @@ function workVerySlow(int $time = 4): void
 {
     
     $host = 'google.com';
-    $time = mt_rand(1, $time);
+    
 
     exec("ping -c {$time} " . escapeshellarg($host), $output, $status);
 

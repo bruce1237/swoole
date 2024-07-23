@@ -34,8 +34,15 @@ class MatchDetails
     }
 
     public function addMatchDetails(string $match, string $section, string $details): array
-    {
-        $this->matchDetail[$match][$section][]=$details;
+    {  
+        $redis = getRedis();
+        $oldDetails = $redis->get("matchDetails");
+        $oldDetails = json_decode($oldDetails, true);
+
+        $oldDetails[$match][$section][]=$details;
+        
+        $this->matchDetail = $oldDetails;
+
         return $this->matchDetail;
     }
 
@@ -43,9 +50,5 @@ class MatchDetails
     {
         return $this->matchDetail;
     }
-
-
-
-
 
 }
