@@ -1,10 +1,8 @@
 <?php
 
-use Swoole\Coroutine;
-
 use function Swoole\Coroutine\run;
 
-use function Swoole\Coroutine\go;
+// use function Swoole\Coroutine\go;
 
 
 echo "Start-Run\n";
@@ -13,26 +11,24 @@ run(function () {
     echo "Coroutine Start\n";
 
     for ($i = 4; $i--;) {
-        $rand = mt_rand(3, 7);
+        
 
-        go(function () use ($i, $rand) {
-            echo "A: routine($i): start...\n";
-            echo "A: ========Workload($i): ($rand) =======\n";
-            sleep($rand);
+        go(function () use ($i) {
+            echo "A: ========Workload($i): Start =======\n";
+            workVerySlow();
             echo "A: ------Workload ($i) Complete-----\n";
+
         });
     }
 
     echo "sleep3";
-    sleep(3);
+    
 
     for ($i = 4; $i--;) {
-        $rand = mt_rand(3, 7);
 
-        go(function () use ($i, $rand) {
-            echo "B: routine($i): start...\n";
-            echo "B: ========Workload($i): ($rand) =======\n";
-            sleep($rand);
+        go(function () use ($i) {
+            echo "B: ========Workload($i): Start =======\n";
+            workVerySlow();
             echo "B: ------Workload ($i) Complete-----\n";
         });
     }
@@ -40,3 +36,21 @@ run(function () {
 });
 
 echo "End-Run\n";
+
+
+
+function workVerySlow(int $time = 18): void
+{
+    
+    $host = 'google.com';
+    $time = mt_rand(4, $time);
+    
+
+    exec("ping -c {$time} " . escapeshellarg($host), $output, $status);
+
+    if ($status === 0) {
+        // echo "Ping Success\n";
+    } else {
+        // echo "Ping Failed\n";
+    }
+}
