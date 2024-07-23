@@ -22,7 +22,7 @@
 
                 <div class="mt-4 mb-4" id="section3Head"></div>
                 <div id="section3"></div>
-
+                
                 <div class="mt-4 mb-4" id="section4Head"></div>
                 <div id="section4"></div>
 
@@ -32,11 +32,16 @@
                 <div id="chatRoom">
                     asdfase
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </body>
 <script>
+    const WebSocket = require('ws');
     var wsUrl = "ws://localhost:9501";
     var webSocket = new WebSocket(wsUrl);
 
@@ -44,28 +49,14 @@
     webSocket.onopen = function (evt) {
         console.log("Event object:", evt);
         console.log("webSocket--connected");
-        webSocket.send("hi, server");
+        websocket.send("Hello from client");
     }
 
     // onMessage
     webSocket.onmessage = function (evt) {
         console.log("received from Server:" + evt.data);
-        // webSocket.send("hi, received");
-        obj = JSON.parse(evt.data);
-        section = obj.section;
-        updates = obj.content;
-
-
-        if ($("#" + section + "Head").val() == "") {
-
-            $("#" + section + "Head").html(section);
-
-        }
-
-
-        $("#" + section).append(updates + "<br />");
-
-
+        websocket.send("received " + evt.data);
+       
 
 
     }

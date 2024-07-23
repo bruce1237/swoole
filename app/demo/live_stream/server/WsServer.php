@@ -23,8 +23,8 @@ class WsServer
         $this->wsServer->set([
             "enable_static_handler" => true,
             "document_root" => __DIR__ . "/../webpage/",
-            "worker_num" => 2,
-            'task_worker_num' => 4,
+            "worker_num" => 4,
+            'task_worker_num' => 8,
         ]);
 
         // register http server functions
@@ -73,10 +73,10 @@ class WsServer
 
     public function onTask(Server $server, int $task_id, int $src_worker_id, mixed $data)
     {
-
         // based on taskName to call different task handler
         $taskHandler = new TaskHandler();
         $taskName = $data['taskName'];
+        $data['data']['server'] = $server;
         return $taskHandler->$taskName($data['data']);
     }
 
@@ -103,5 +103,6 @@ class WsServer
 
     public function onMessage(Server $server, Frame $frame)
     {
+        // $server->push($frame->fd, "hi from server");
     }
 }

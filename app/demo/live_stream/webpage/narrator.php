@@ -22,7 +22,7 @@ class Narrator
     }
 
     public function updateMatch(array $data): bool
-    {   
+    {
         $matchName = $data['POST']["game"];
         $section = $data['POST']["section"];
         $content = date("H:i", time()) ." ". $data['POST']["content"];
@@ -41,13 +41,30 @@ class Narrator
          * some client was connected, but push failed
          */
         foreach($connectedClients as $fd){
-            
             if ($data['Server']->isEstablished($fd)) {
-                
-            
                 $data['Server']->push((int)$fd, $content);
             }
         }
+
+        // using task to push content to client
+        // FAILED... Don't know why
+
+        // $server = $data['Server'];        
+        // $taskData = [
+        //     "taskName" => "publishLive",
+        //     "data" => [
+        //         "clientIds" => $connectedClients,
+        //         "content" => $content,
+        //     ],
+        // ];
+        // $server->task($taskData);
+
+
+
+
+
+
+
         return true;
         
     }

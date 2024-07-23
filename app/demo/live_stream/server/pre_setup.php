@@ -31,6 +31,7 @@ function analysisUri(string $uri): array|false
 
 function workVerySlow(int $time = 4): void
 {
+    
     $host = 'google.com';
     $time = mt_rand(1, $time);
 
