@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script src ="./js/index.js"></script>
 </head>
 
 <body>
@@ -32,53 +33,17 @@
                 <div id="chatRoom">
                     asdfase
                 </div>
+                <div id="sendChat">
+                    <div class="input-group">
+                        <input id="chatMsg" type="text" class="form-control" placeholder="Enter text here">
+                        <button id="chatSend" class="btn btn-primary">Send</button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 </body>
-<script>
-    var wsUrl = "ws://localhost:9501";
-    var webSocket = new WebSocket(wsUrl);
 
-    // onOpen
-    webSocket.onopen = function (evt) {
-        console.log("Event object:", evt);
-        console.log("webSocket--connected");
-        webSocket.send("hi, server");
-    }
-
-    // onMessage
-    webSocket.onmessage = function (evt) {
-        console.log("received from Server:" + evt.data);
-        // webSocket.send("hi, received");
-        obj = JSON.parse(evt.data);
-        section = obj.section;
-        updates = obj.content;
-
-
-        if ($("#" + section + "Head").val() == "") {
-
-            $("#" + section + "Head").html(section);
-
-        }
-
-
-        $("#" + section).append(updates + "<br />");
-
-
-
-
-    }
-
-    // onClose
-    webSocket.onclose = function (evt) {
-        console.log("Closed");
-    }
-
-    webSocket.onerror = function (evt, e) {
-        console.log('Error occured: ' + evt.data);
-    };
-
-</script>
 
 </html>
