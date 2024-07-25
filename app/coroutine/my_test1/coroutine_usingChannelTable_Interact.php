@@ -28,24 +28,24 @@ $taskListC = [
 ];
 
 
-echo "Log - create Channel \n";
 
-$channel = new Channel(10); // 8 based on the task output
-$channelC = new Channel(10); // 8 based on the task output
 
-echo "Log - create Table \n";
-$table = new Table(8); // 8 indicate the max records can contain
-// define the table
-$table->column("taskName", Table::TYPE_STRING, 5);
-$table->column("result", Table::TYPE_STRING, 50);
 
-$table->create(); //create table
 
 
 echo "\n\nLog - Start Coroutine SSSSSSSSSSSSSSSSSSSSSSS\n\n";
-run(function () use ($taskListA, $taskListB, $taskListC, $channel, $channelC, $table) {
-    $taskListCompleteStatus = [];
-
+run(function () use ($taskListA, $taskListB, $taskListC) {
+    echo "Log - create Channel \n";
+    $channel = new Channel(10); // 8 based on the task output
+    $channelC = new Channel(10); // 8 based on the task output
+    
+    echo "Log - create Table \n";
+    $table = new Table(8); // 8 indicate the max records can contain
+    // define the table
+    $table->column("taskName", Table::TYPE_STRING, 5);
+    $table->column("result", Table::TYPE_STRING, 50);
+    
+    $table->create(); //create table
     echo "start processing TaskList - A \n";
     go(function () use ($channel, $table, $taskListB, $taskListA) {
         foreach ($taskListA as $task) {
