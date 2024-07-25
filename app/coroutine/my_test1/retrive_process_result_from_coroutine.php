@@ -15,23 +15,6 @@ $taskListA = [
     "taskD",
 ];
 
-$taskListB = [
-    "taskW",
-    "taskX",
-    "taskY",
-    "taskZ",
-];
-
-$taskListC = [
-    "taskListA",
-    "taskListB",
-];
-
-
-echo "Log - create Channel \n";
-
-$channel = new Channel(10); // 8 based on the task output
-$channelC = new Channel(10); // 8 based on the task output
 
 echo "Log - create Table \n";
 $table = new Table(8); // 8 indicate the max records can contain
@@ -41,36 +24,42 @@ $table->column("result", Table::TYPE_STRING, 50);
 
 $table->create(); //create table
 
+$processResult = [];
 
 echo "\n\nLog - Start Coroutine SSSSSSSSSSSSSSSSSSSSSSS\n\n";
-run(function () use ($taskListA, $taskListB, $taskListC, $channel, $channelC, $table) {
-    
+run(function () use ($taskListA,  $table, &$processResult) {
+
 
     echo "start processing TaskList - A \n";
-    go(function () use ($channel, $table, $taskListB, $taskListA) {
-        foreach ($taskListA as $task) {
+    foreach ($taskListA as $task) {
+        go(function () use ($task, $table, &$processResult) {
+            echo "processTask Log - starting process task $task\n";
             $result = processTask($task);
-            echo "TaskList - A - Log - push $task into Chanel\n";
-            $channel->push($result);
-
-
-            $tableRecords = getTable($table, $taskListB);
-            echo "TaskList - A - Log -  get from table: ########" . json_encode($tableRecords) . " \n";
-        }
-        echo "TaskList - A - Log -  END of AAAAAAAAAAAAA\n\n\n\n\n";
-    });
-
-
-
-
+            $processResult[] = $result; 
+            $table->set(
+                $task,
+                [
+                    "taskName" => $task,
+                    "result" => $result,
+                ]
+            );
+            echo "processTask Log - Complete process task $task\n";
+        });
+    }
 });
 
 
 
 echo "\n\nEnd Coroutine XXXXXXXXXXXXXXXXXXXXXXXXX\n\n";
 
+echo "process result from table\n";
+foreach ($taskListA as $task) {
+    echo  $table->get($task, "result")."\n\n";
+}
 
 
+echo "process result from \$processResult\n";
+var_dump($processResult);
 
 
 
@@ -92,10 +81,9 @@ function workVerySlow(int $time = 4): bool
 
 function processTask(string $taskName): mixed
 {
-    echo "processTask Log - starting process task $taskName\n";
+
     $processingTime = mt_rand(1, 9);
 
     workVerySlow($processingTime);
-    return [$taskName => "Process Completed!"];
+    return "$taskName Process Completed!";
 }
-
