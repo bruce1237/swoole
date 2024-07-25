@@ -22,10 +22,11 @@ $taskListB = [
     "taskZ",
 ];
 
+echo "Log - create Channel \n";
 $channel = new Channel(10); // 8 based on the task output
 
+echo "Log - create Table \n";
 $table = new Table(8); // 8 indicate the max records can contain
-
 // define the table
 $table->column("taskName", Table::TYPE_STRING, 5);
 $table->column("result", Table::TYPE_STRING, 50);
@@ -33,6 +34,7 @@ $table->column("result", Table::TYPE_STRING, 50);
 $table->create(); //create table
 
 
+echo "\n\nLog - Start Coroutine SSSSSSSSSSSSSSSSSSSSSSS\n\n";
 run(function () use ($taskListA, $taskListB, $channel, $table) {
 
 
@@ -70,6 +72,22 @@ run(function () use ($taskListA, $taskListB, $channel, $table) {
         });
     }
 });
+echo "\n\nEnd Coroutine XXXXXXXXXXXXXXXXXXXXXXXXX\n\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function workVerySlow(int $time = 4): bool
 {
@@ -118,10 +136,3 @@ function getChannel(Channel $channel)
 }
 
 
-$endTableCount = $table->count();
-
-echo "END ----------- $endTableCount\n";
-
-$a = $table->get("taskX");
-
-var_dump($a);
