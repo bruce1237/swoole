@@ -22,8 +22,16 @@ $taskListB = [
     "taskZ",
 ];
 
+$taskListC = [
+    "taskListA",
+    "taskListB",
+];
+
+
 echo "Log - create Channel \n";
+
 $channel = new Channel(10); // 8 based on the task output
+$channelC = new Channel(10); // 8 based on the task output
 
 echo "Log - create Table \n";
 $table = new Table(8); // 8 indicate the max records can contain
@@ -35,29 +43,28 @@ $table->create(); //create table
 
 
 echo "\n\nLog - Start Coroutine SSSSSSSSSSSSSSSSSSSSSSS\n\n";
-run(function () use ($taskListA, $taskListB, $channel, $table) {
-
+run(function () use ($taskListA, $taskListB, $taskListC, $channel, $channelC, $table) {
+    $taskListCompleteStatus = [];
 
     echo "start processing TaskList - A \n";
-    foreach ($taskListA as $task) {
-        go(function () use ($task, $channel, $table, $taskListB) {
+    go(function () use ($channel, $table, $taskListB, $taskListA) {
+        foreach ($taskListA as $task) {
             $result = processTask($task);
-            echo "Log - push $task into Chanel\n";
+            echo "TaskList - A - Log - push $task into Chanel\n";
             $channel->push($result);
 
 
-
             $tableRecords = getTable($table, $taskListB);
-            echo "Log -  get from table: ########" . json_encode($tableRecords) . " \n";
-        });
-    }
+            echo "TaskList - A - Log -  get from table: ########" . json_encode($tableRecords) . " \n";
+        }
+        echo "TaskList - A - Log -  END of AAAAAAAAAAAAA\n\n\n\n\n";
+    });
 
     echo "start processing TaskList - B \n";
-    foreach ($taskListB as $task) {
-
-        go(function () use ($task, $channel, $table, $taskListA) {
+    go(function () use ($channel, $table, $taskListB) {
+        foreach ($taskListB as $task) {
             $result = processTask($task);
-            echo "Log - set $task into Table\n";
+            echo "TaskList - B - Log - set $task into Table\n";
             $table->set(
                 $task,
                 [
@@ -65,18 +72,34 @@ run(function () use ($taskListA, $taskListB, $channel, $table) {
                     "result" => json_encode($result),
                 ]
             );
-
-
             $channelContent = getChannel($channel);
-            echo "Log -  get from Channel via Function *******" . json_encode($channelContent) . "\n";
-        });
-    }
+            echo "TaskList - B - Log -  get from Channel " . json_encode($channelContent) . "\n";
+        }
+
+        echo "TaskList - B - Log - END of BBBBBBBBBBBBBBB\n\n\n\n\n";
+    });
+
+
+    echo "start processing TaskList - C \n";
+    go(function () use ($taskListC, $table, $channelC) {
+        foreach ($taskListC as $taskName) {
+            echo "TaskList - C - Log - Calling multi_coroutine\n";
+            $taskListCResult[] = multi_coroutine($taskName, $channelC);
+            $table->set(
+                "nest",
+                [
+                    "taskName" => "Nest",
+                    "result" => json_encode($taskListCResult),
+                ]
+            );
+        }
+        echo "TaskList - C - Log - END of CCCCCCCCCCCC\n\n\n\n\n";
+    });
 });
+
+
+
 echo "\n\nEnd Coroutine XXXXXXXXXXXXXXXXXXXXXXXXX\n\n";
-
-
-
-
 
 
 
@@ -95,9 +118,8 @@ function workVerySlow(int $time = 4): bool
     exec("ping -c {$time} " . escapeshellarg($host), $output, $status);
     if ($status === 0) {
         return true;
-    } else {
-        echo false;
     }
+    return false;
 }
 
 function processTask(string $taskName): mixed
@@ -135,4 +157,26 @@ function getChannel(Channel $channel)
     return $channelData;
 }
 
+function multi_coroutine(string $taskName, Channel $channel)
+{
+    go(function () use ($taskName, $channel) {
 
+        $result = [];
+        for ($i = 0; $i < 4; $i++) {
+            workVerySlow();
+            $result[] = "$taskName +++ ";
+        }
+        echo "multi_coroutine Log +++ pushing to channel " . json_encode($result) . "\n";
+        $channel->push($result);
+    });
+
+    go(function () use ($taskName, $channel) {
+        $result = [];
+        for ($i = 0; $i < 4; $i++) {
+            workVerySlow();
+            $result[] = "$taskName --- ";
+        }
+        echo "multi_coroutine Log --- pushing to channel " . json_encode($result) . "\n";
+        $channel->push($result);
+    });
+}
