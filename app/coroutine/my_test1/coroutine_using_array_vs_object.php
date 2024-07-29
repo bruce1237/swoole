@@ -21,6 +21,13 @@ $pool = new RedisPool((new RedisConfig)
 $connection = [];
 $counter = new CC();
 
+/**
+ * using array, will send $connection default into run, everytime, that's why need to use reference
+ * 
+ * but for object, it is fine
+ */
+
+
 Coroutine\run(function () use ($pool, &$connection, $counter) {
     $arr = [];
     for ($n = N; $n--;) {
