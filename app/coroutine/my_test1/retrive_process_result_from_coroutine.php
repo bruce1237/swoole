@@ -30,12 +30,12 @@ echo "\n\nLog - Start Coroutine SSSSSSSSSSSSSSSSSSSSSSS\n\n";
 run(function () use ($taskListA,  $table, &$processResult) {
 
 
-    echo "start processing TaskList - A \n";
+    echo "processing TaskList - A  started\n";
     foreach ($taskListA as $task) {
         go(function () use ($task, $table, &$processResult) {
             echo "processTask Log - starting process task $task\n";
             $result = processTask($task);
-            $processResult[] = $result; 
+            $processResult[] = $result;
             $table->set(
                 $task,
                 [
@@ -46,6 +46,7 @@ run(function () use ($taskListA,  $table, &$processResult) {
             echo "processTask Log - Complete process task $task\n";
         });
     }
+    echo "processing TaskList - Completed \n\n\n\n\n\n";
 });
 
 
@@ -54,7 +55,7 @@ echo "\n\nEnd Coroutine XXXXXXXXXXXXXXXXXXXXXXXXX\n\n";
 
 echo "process result from table\n";
 foreach ($taskListA as $task) {
-    echo  $table->get($task, "result")."\n\n";
+    echo  $table->get($task, "result") . "\n\n";
 }
 
 
