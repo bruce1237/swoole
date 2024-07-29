@@ -16,12 +16,15 @@ $pool = new RedisPool((new RedisConfig)
         ->withPort(6379)
         ->withAuth('')
         ->withDbIndex(0)
-        ->withTimeout(1)
+        ->withTimeout(1),
+        128
 );
+$a = microtime(true) - $s;
+echo "$a ----------\n\n\n";
 $connection = [];
 $counter = new CC();
 
-Coroutine\run(function () use ($pool, &$connection, $counter) {
+Coroutine\run(function () use ($pool, &$connection, $counter, $s) {
     $arr = [];
     for ($n = N; $n--;) {
         Coroutine::create(function () use ($pool, $n, &$connection, $counter) {
@@ -64,4 +67,13 @@ class CC
     {
         return count($this->arr);
     }
+}
+function workVerySlow(int $time = 4): bool
+{
+    $host = 'google.com';
+    exec("ping -c {$time} " . escapeshellarg($host), $output, $status);
+    if ($status === 0) {
+        return true;
+    }
+    return false;
 }
